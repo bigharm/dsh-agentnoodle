@@ -1,0 +1,34 @@
+{
+  "npcs": [
+    {
+      "id": "npc_lao_tangmu",
+      "name": "老汤姆",
+      "gender": "男",
+      "profile": {
+        "identity": "暮色酒馆老板",
+        "description": "五十多岁，络腮胡子，围着一条油腻的围裙，目光精明",
+        "personality_traits": ["精明", "话少", "重信用"],
+        "background": "年轻时是佣兵，攒够钱后在暮色镇开了这家酒馆，消息灵通，什么都肯卖，只要价钱合适"
+      },
+      "location_id": "tavern_hall",
+      "avatar": "npc_lao_tangmu.png",
+      "active": true,
+      "dead": false
+    },
+    {
+      "id": "npc_lili",
+      "name": "莉莉",
+      "gender": "女",
+      "profile": {
+        "identity": "酒保",
+        "description": "二十出头的姑娘，红发，动作麻利，嘴皮子利索",
+        "personality_traits": ["开朗", "机灵", "八卦"],
+        "background": "在酒馆帮工两年，镇上所有新鲜事都逃不过她的耳朵"
+      },
+      "location_id": "tavern_hall",
+      "avatar": "npc_lili.png",
+      "active": true,
+      "dead": false
+    }
+  ]
+}

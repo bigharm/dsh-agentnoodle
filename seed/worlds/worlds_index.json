@@ -1,0 +1,11 @@
+{
+  "worlds": [
+    {
+      "id": "tavern",
+      "name": "暮色酒馆（原型）",
+      "description": "AgentNoodle 最小闭环原型世界：群山与密林交界处的边境小镇",
+      "created_at": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "current_world": "tavern"
+}

@@ -1,0 +1,33 @@
+{
+  "regions": [
+    {
+      "id": "tavern_town",
+      "name": "暮色镇",
+      "description": "群山与密林交界处的边境小镇，鱼龙混杂",
+      "icon": "🏘️"
+    }
+  ],
+  "locations": [
+    {
+      "id": "tavern_hall",
+      "name": "暮色酒馆大厅",
+      "parent": "tavern_town",
+      "description": "昏暗温暖的酒馆大厅，壁炉里火苗噼啪作响，空气中弥漫着麦酒与烤肉的香气",
+      "icon": "🍺"
+    },
+    {
+      "id": "tavern_yard",
+      "name": "酒馆后院马厩",
+      "parent": "tavern_town",
+      "description": "酒馆后院，几匹疲惫的马在槽边打盹，杂物堆里藏着不少故事",
+      "icon": "🐴"
+    },
+    {
+      "id": "town_square",
+      "name": "镇中心广场",
+      "parent": "tavern_town",
+      "description": "暮色镇的中心广场，白天是集市，傍晚人流散去，只剩几只野猫",
+      "icon": "⛲"
+    }
+  ]
+}

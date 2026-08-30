@@ -1,0 +1,51 @@
+{
+  "name": "agentnoodle",
+  "version": "0.1.0",
+  "description": "AI 驱动的群像反应叙事游戏（DeepSeek Harness 插件）：玩家输入一个行动，在场多个 NPC 各自回应，每条反应独立成一条带头像插图的聊天室消息。",
+  "type": "module",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek",
+    "harness",
+    "game",
+    "rpg",
+    "narrative",
+    "ai",
+    "chat",
+    "tavern"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bigharm/agentnoodle.git"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": "./client/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "client",
+    "seed",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
+}
