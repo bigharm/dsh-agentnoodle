@@ -4,6 +4,10 @@
   "description": "AI 驱动的群像反应叙事游戏（DeepSeek Harness 插件）：玩家输入一个行动，在场多个 NPC 各自回应，每条反应独立成一条带头像插图的聊天室消息。",
   "type": "module",
   "main": "lib/index.js",
+  "scripts": {
+    "test": "node scripts/selftest.mjs",
+    "check": "node --check lib/index.js && node --check lib/game.js && node --check client/client.js && node scripts/selftest.mjs"
+  },
   "license": "MIT",
   "keywords": [
     "dsh",
