@@ -1,4 +1,4 @@
-# 🍜 agentnoodle
+# 🍜 dsh-agentnoodle
 
 AI 驱动的**群像反应叙事游戏**插件（DeepSeek Harness）。
 
@@ -20,10 +20,10 @@ AI 驱动的**群像反应叙事游戏**插件（DeepSeek Harness）。
 在 DeepSeek Harness 中：
 
 ```sh
-dsh plugin --profile web add agentnoodle
+dsh plugin --profile web add dsh-agentnoodle
 ```
 
-或打开 **Settings → Plugin Market** 搜索 `agentnoodle` 一键安装。
+或打开 **Settings → Plugin Market** 搜索 `dsh-agentnoodle` 一键安装。
 
 安装后重启 `dsh web`，页面右下角会出现 **🍜 AgentNoodle 聊天室** 悬浮窗：
 选世界 → 创建/选择角色 → 输入行动 → 看多个 NPC 各自回应。

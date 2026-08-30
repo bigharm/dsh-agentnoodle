@@ -1,7 +1,7 @@
 # agentnoodle 插件行：插入 profile 组合层
 - insert:
-    - id: agentnoodle
-      name: 'agentnoodle'
+    - id: dsh-agentnoodle
+      name: 'dsh-agentnoodle'
       config:
         # 可选：覆盖默认数据目录（默认 ~/.dsh/agentnoodle）
         dataDir: '~/.dsh/agentnoodle'

@@ -1,5 +1,5 @@
 {
-  "name": "agentnoodle",
+  "name": "dsh-agentnoodle",
   "version": "0.1.0",
   "description": "AI 驱动的群像反应叙事游戏（DeepSeek Harness 插件）：玩家输入一个行动，在场多个 NPC 各自回应，每条反应独立成一条带头像插图的聊天室消息。",
   "type": "module",
@@ -19,7 +19,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bigharm/agentnoodle.git"
+    "url": "git+https://github.com/bigharm/dsh-agentnoodle.git"
   },
   "dsh": {
     "bundle": {

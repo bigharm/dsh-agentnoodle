@@ -1,7 +1,7 @@
 // agentnoodle · Client bundle（web 平台，ModuleLoader 格式）
 // 聊天室面板：输入行动 → 多个 NPC 各回一条（带头像/占位圆）→ fetch /anod/api/*
 window.__ModuleLoader__.load({
-  id: 'agentnoodle',
+  id: 'dsh-agentnoodle',
   factory: (require) => {
     var module = { exports: {} };
     var exports = module.exports;
