@@ -35,17 +35,28 @@ dsh plugin --profile web add dsh-agentnoodle
 - 提示词：`<dataDir>/prompts/environment.txt`，改完即时生效（无需重启）
 - AI 参数：`<dataDir>/.env`（`AI_TEMPERATURE` / `AI_MAX_TOKENS` / `HISTORY_TAIL`）
 
+## 在对话里创建世界
+
+插件注册了三个模型工具，harness 的 agent 可以直接调用——**不用写代码、不用重启**：
+
+- `agentnoodle_create_world` — 创建新世界（worldId + name + 可选世界观），自动建地点/NPC 骨架并切换为当前世界
+- `agentnoodle_list_worlds` — 列出所有世界（地点数/NPC 数/角色数）
+- `agentnoodle_add_npc` — 向世界添加 NPC（worldId + name + locationId）
+
+例如直接对 agent 说：「帮我建一个叫『青云门』的修仙世界，掌门叫青云真人」——agent 会调用工具完成，面板刷新后即可选择游玩。世界就是普通文件（`<dataDir>/worlds/<id>/`），任何能写这些文件的入口都能建世界。
+
 ## 开发
 
 ```sh
-npm run test:selftest   # 用假 fs/AI 跑通游戏闭环自测（无需 harness 运行时）
+npm test            # 跑自测（假 fs/AI，无需 harness 运行时）
+npm run check       # 语法检查 + 自测
 ```
 
 结构：
 
 ```
 lib/game.js        # 游戏核心逻辑（纯函数、依赖注入）
-lib/index.js       # Host 插件入口：HTTP API + 头像路由 + 数据播种
+lib/index.js       # Host 插件入口：HTTP API + 头像路由 + 数据播种 + 模型工具
 client/client.js   # 浏览器面板（ModuleLoader bundle）
 seed/              # 首次启动的默认世界/提示词
 ```

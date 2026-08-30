@@ -59,4 +59,34 @@ console.log('存档条目数:', saved.conversation_history.length)
 if (saved.conversation_history.length !== 3) throw new Error('存档未写入 3 条')
 if (saved.conversation_history[1].speaker !== '老汤姆' || saved.conversation_history[1].avatar !== 'npc_lao_tangmu.png') throw new Error('存档 NPC 条目异常')
 
+// 6. 创建世界
+const cw = game.createWorld({ worldId: 'qingyun', name: '青云门', worldview: '修仙门派，剑气纵横。' })
+console.log('createWorld:', JSON.stringify(cw))
+if (!cw.ok) throw new Error('createWorld 失败')
+
+// 7. 列举世界
+const lw = game.listWorlds()
+console.log('listWorlds:', JSON.stringify(lw))
+if (!lw.worlds.some((w) => w.id === 'qingyun')) throw new Error('listWorlds 缺新世界')
+
+// 8. 加 NPC：无地点应报错
+const an1 = game.addNpc({ worldId: 'qingyun', name: '掌门', locationId: 'main_hall' })
+console.log('addNpc(无地点):', JSON.stringify(an1))
+if (!an1.error) throw new Error('addNpc 应因无地点失败')
+
+// 9. 补地点后加 NPC
+deps.writeText(join(root, 'worlds', 'qingyun', 'locations.json'), JSON.stringify({
+  regions: [],
+  locations: [{ id: 'main_hall', name: '青云大殿', parent: '', description: '门派正殿', icon: '🏯' }],
+}))
+const an2 = game.addNpc({ worldId: 'qingyun', name: '青云真人', locationId: 'main_hall', identity: '掌门', description: '白发仙风道骨' })
+console.log('addNpc:', JSON.stringify(an2))
+if (!an2.ok || an2.locationId !== 'main_hall') throw new Error('addNpc 失败')
+
+// 10. 新世界立即可玩
+const lw2 = game.listWorlds()
+const qingyun = lw2.worlds.find((w) => w.id === 'qingyun')
+console.log('新世界状态:', JSON.stringify(qingyun))
+if (qingyun.npcs !== 1) throw new Error('新世界 NPC 数不对')
+
 console.log('✅ agentnoodle 自测全部通过')

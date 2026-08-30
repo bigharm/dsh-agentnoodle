@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3 (2026-08-30)
+
+- 新增：模型工具 `agentnoodle_create_world` / `agentnoodle_list_worlds` / `agentnoodle_add_npc`——可在对话里直接创建和管理世界，无需写文件。
+
 ## 0.1.2 (2026-08-30)
 
 - 新增：seed 预置默认角色「无名旅人」，全新安装后打开即可直接游玩（无需先创建角色）。
