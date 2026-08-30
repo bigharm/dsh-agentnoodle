@@ -1,0 +1,23 @@
+{
+  "character_id": "char_default",
+  "world_id": "tavern",
+  "created_at": "2026-08-30T00:00:00.000Z",
+  "last_played": "2026-08-30T00:00:00.000Z",
+  "profile": {
+    "name": "无名旅人",
+    "gender": "",
+    "identity": "旅人",
+    "appearance": "普通旅人",
+    "personality": "沉默寡言",
+    "background": ""
+  },
+  "status": {
+    "is_dead": false,
+    "death_cause": null,
+    "health": 100,
+    "current_scene": "暮色酒馆大厅"
+  },
+  "relationships": {},
+  "inventory": [],
+  "conversation_history": []
+}
