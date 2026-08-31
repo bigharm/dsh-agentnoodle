@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5 (2026-08-30)
+
+- 改进：`agentnoodle_list_worlds` 支持传入 `worldId` 查看世界详情——全部地点（含各自 NPC 名单）、NPC 名单（身份/地点/头像）、角色与世界观摘要。
+
 ## 0.1.4 (2026-08-30)
 
 - 新增：模型工具 `agentnoodle_add_location`——通过对话添加地点。

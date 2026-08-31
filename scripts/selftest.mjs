@@ -105,4 +105,11 @@ const qwLocations = JSON.parse(readFileSync(join(root, 'worlds', 'qingyun', 'loc
 console.log('自动注册后的地点:', qwLocations.map((l) => l.name).join(', '))
 if (!qwLocations.some((l) => l.name === '观云崖')) throw new Error('AI 解锁的新地点未自动注册')
 
+// 12. 世界详情模式
+const detail = game.listWorlds({ worldId: 'qingyun' })
+console.log('世界详情:', JSON.stringify({ name: detail.name, locations: detail.locations.map((l) => l.name + '[' + l.npcs.join(',') + ']'), npcs: detail.npcs.map((n) => n.name + '@' + n.locationId) }))
+if (detail.locations.length !== 2) throw new Error('详情地点数不对')
+if (!detail.locations.some((l) => l.id === 'main_hall' && l.npcs.includes('青云真人'))) throw new Error('详情地点 NPC 名单缺失')
+if (!detail.npcs.some((n) => n.name === '青云真人' && n.locationId === 'main_hall')) throw new Error('详情 NPC 名单缺失')
+
 console.log('✅ agentnoodle 自测全部通过')
