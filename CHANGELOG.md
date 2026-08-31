@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.7 (2026-08-30)
+
+- 新增：`agentnoodle_import_card`——导入 SillyTavern 角色卡为 NPC（V1/V2/V3 JSON 或 PNG tEXt chara 块；name/description/personality/scenario/first_mes 映射）。
+- 新增：`agentnoodle_import_world`——导入 LazyNoodle 风格世界目录（worldview.txt + locations/npcs/avatars），注册进索引。
+
 ## 0.1.6 (2026-08-30)
 
 - 新增：`agentnoodle_update_worldview`——世界观迭代阶段写入最终版。

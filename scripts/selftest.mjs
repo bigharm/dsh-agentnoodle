@@ -1,5 +1,5 @@
 // agentnoodle · 自测：用假 fs + 假 AI 跑通 世界→建角色→行动→存档 闭环（不依赖 harness 运行时）
-import { mkdtempSync, readFileSync, writeFileSync, readdirSync, mkdirSync, cpSync } from 'node:fs'
+import { mkdtempSync, readFileSync, writeFileSync, readdirSync, mkdirSync, cpSync, copyFileSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -14,6 +14,8 @@ const deps = {
   readText: (p) => { try { return readFileSync(p, 'utf8') } catch { return null } },
   writeText: (p, c) => { mkdirSync(join(p, '..'), { recursive: true }); writeFileSync(p, c, 'utf8') },
   listDirNames: (d) => { try { return readdirSync(d) } catch { return [] } },
+  readBinary: (p) => { try { return readFileSync(p) } catch { return null } },
+  copyFile: (f, t) => { mkdirSync(join(t, '..'), { recursive: true }); copyFileSync(f, t) },
   log: (m) => console.log('[test]', m),
 }
 
@@ -141,5 +143,41 @@ const wNpc = JSON.parse(readFileSync(join(root, 'worlds', 'qingyun', 'npcs.json'
 if (wLoc.locations.length !== 2) throw new Error('生成地点数不对')
 if (wNpc.npcs.length !== 1) throw new Error('应只有 1 个合法 NPC（编造地点的被校验拒绝）')
 if (wNpc.npcs[0].location_id !== 'main_hall') throw new Error('生成 NPC 地点异常')
+
+// 14. 角色卡导入（JSON，V2）
+const cardV2 = { spec: 'chara_card_v2', spec_version: '2.0', data: { name: '剑灵', description: '一柄古剑中诞生的剑灵，白衣如雪。', personality: '清冷、孤傲、重诺', scenario: '在剑峰沉睡千年，等待有缘人。', first_mes: '你唤醒了沉睡千年的剑灵……' } }
+const ic1 = game.importCard({ worldId: 'qingyun', cardText: JSON.stringify(cardV2), locationId: 'sword_peak' })
+console.log('importCard(JSON):', JSON.stringify(ic1))
+if (!ic1.ok || ic1.name !== '剑灵' || ic1.locationId !== 'sword_peak') throw new Error('importCard JSON 失败')
+const npcsAfter = JSON.parse(readFileSync(join(root, 'worlds', 'qingyun', 'npcs.json'), 'utf8')).npcs
+const jianling = npcsAfter.find((n) => n.name === '剑灵')
+if (!jianling || !jianling.profile.personality_traits.includes('清冷') || !jianling.first_mes) throw new Error('importCard 字段映射异常')
+
+// 15. 角色卡导入（PNG tEXt chara 块）
+function buildFakeCardPng(cardJson) {
+  const b64 = Buffer.from(JSON.stringify(cardJson), 'utf8').toString('base64')
+  function chunk(type, data) { const len = Buffer.alloc(4); len.writeUInt32BE(data.length); return Buffer.concat([len, Buffer.from(type, 'ascii'), data, Buffer.alloc(4)]) }
+  const sig = Buffer.from([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])
+  return Buffer.concat([sig, chunk('IHDR', Buffer.alloc(0)), chunk('tEXt', Buffer.concat([Buffer.from('chara\0', 'ascii'), Buffer.from(b64, 'ascii')])), chunk('IEND', Buffer.alloc(0))])
+}
+const pngPath = join(root, 'card.png')
+writeFileSync(pngPath, buildFakeCardPng(cardV2))
+const ic2 = game.importCard({ worldId: 'qingyun', filePath: pngPath, locationId: 'main_hall', name: '剑灵（图）' })
+console.log('importCard(PNG):', JSON.stringify(ic2))
+if (!ic2.ok || ic2.name !== '剑灵（图）') throw new Error('importCard PNG 失败')
+
+// 16. 世界导入（LazyNoodle 风格目录）
+const srcWorld = join(root, 'src-world')
+mkdirSync(join(srcWorld, 'avatars'), { recursive: true })
+writeFileSync(join(srcWorld, 'worldview.txt'), '旧朝江湖，快意恩仇。', 'utf8')
+writeFileSync(join(srcWorld, 'locations.json'), JSON.stringify({ regions: [], locations: [{ id: 'ke_zhan', name: '悦来客栈', parent: '', description: '江湖驿站', icon: '🏮' }] }), 'utf8')
+writeFileSync(join(srcWorld, 'npcs.json'), JSON.stringify({ npcs: [{ id: 'npc_ke_zhan_1', name: '店小二', profile: { identity: '跑堂', description: '腿脚麻利', personality_traits: ['机灵'], background: '' }, location_id: 'ke_zhan', active: true, dead: false }] }), 'utf8')
+writeFileSync(join(srcWorld, 'avatars', 'npc_ke_zhan_1.png'), Buffer.from([0x89, 0x50, 0x4E, 0x47, 1, 2, 3, 4]))
+const iw = game.importWorld({ worldId: 'jianghu', sourceDir: srcWorld, name: '旧朝江湖' })
+console.log('importWorld:', JSON.stringify(iw))
+if (!iw.ok || iw.locations !== 1 || iw.npcs !== 1 || iw.avatars !== 1) throw new Error('importWorld 失败')
+const iwIndex = JSON.parse(readFileSync(join(root, 'worlds', 'worlds_index.json'), 'utf8'))
+if (!iwIndex.worlds.some((w) => w.id === 'jianghu')) throw new Error('importWorld 未注册索引')
+if (!existsSync(join(root, 'worlds', 'jianghu', 'avatars', 'npc_ke_zhan_1.png'))) throw new Error('importWorld 未复制头像')
 
 console.log('✅ agentnoodle 自测全部通过')

@@ -44,6 +44,8 @@ dsh plugin --profile web add dsh-agentnoodle
 - `agentnoodle_generate_content` — 按世界观用 AI 生成地点（stage=locations）或 NPC（stage=npcs，自动校验地点归属），或两者（stage=all）
 - `agentnoodle_list_worlds` — 世界概览；传 worldId 查看详情（地点+NPC 名单）
 - `agentnoodle_add_location` / `agentnoodle_add_npc` — 手工补地点/NPC
+- `agentnoodle_import_card` — 导入 SillyTavern 角色卡为 NPC（粘贴 JSON 或本地 PNG/JSON 卡路径）
+- `agentnoodle_import_world` — 导入 LazyNoodle 风格世界目录（worldview.txt + locations/npcs/avatars）
 
 ### 从零开玩的标准流程
 
@@ -55,6 +57,11 @@ dsh plugin --profile web add dsh-agentnoodle
 例如：「帮我建一个『青云门』的修仙世界」→ 讨论世界观 → 「地点和 NPC 也生成一下」——agent 调工具完成，全程不用碰代码。
 
 世界就是普通文件（`<dataDir>/worlds/<id>/`），任何能写这些文件的入口都能建世界。
+
+### 角色卡 / 世界导入
+
+- **SillyTavern 角色卡**：`import_card` 支持 V1/V2/V3 JSON（粘贴 `cardText`）或 PNG 卡片（本地 `filePath`，从 tEXt `chara` 块解析）。导入为 NPC：`name`→NPC 名、`description`→描述、`personality`→性格标签、`scenario`+`personality`→背景、`first_mes`→存档备用。
+- **LazyNoodle 世界**：`import_world` 直接导入一个世界目录（`worldview.txt` + 可选 `locations.json`/`npcs.json`/`avatars/`），注册进索引并切换为当前世界——迁移已有世界观零成本。
 
 ## 开发
 
