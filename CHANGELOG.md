@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4 (2026-08-30)
+
+- 新增：模型工具 `agentnoodle_add_location`——通过对话添加地点。
+- 改进：AI 在游玩中解锁的新地点（`new_location`）自动注册进地点库，保证 NPC 归属与场景查找不断。
+
 ## 0.1.3 (2026-08-30)
 
 - 新增：模型工具 `agentnoodle_create_world` / `agentnoodle_list_worlds` / `agentnoodle_add_npc`——可在对话里直接创建和管理世界，无需写文件。

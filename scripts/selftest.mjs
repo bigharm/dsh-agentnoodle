@@ -74,11 +74,10 @@ const an1 = game.addNpc({ worldId: 'qingyun', name: '掌门', locationId: 'main_
 console.log('addNpc(无地点):', JSON.stringify(an1))
 if (!an1.error) throw new Error('addNpc 应因无地点失败')
 
-// 9. 补地点后加 NPC
-deps.writeText(join(root, 'worlds', 'qingyun', 'locations.json'), JSON.stringify({
-  regions: [],
-  locations: [{ id: 'main_hall', name: '青云大殿', parent: '', description: '门派正殿', icon: '🏯' }],
-}))
+// 9. 用 addLocation 工具补地点后加 NPC
+const al = game.addLocation({ worldId: 'qingyun', name: '青云大殿', locationId: 'main_hall', description: '门派正殿', icon: '🏯' })
+console.log('addLocation:', JSON.stringify(al))
+if (!al.ok) throw new Error('addLocation 失败')
 const an2 = game.addNpc({ worldId: 'qingyun', name: '青云真人', locationId: 'main_hall', identity: '掌门', description: '白发仙风道骨' })
 console.log('addNpc:', JSON.stringify(an2))
 if (!an2.ok || an2.locationId !== 'main_hall') throw new Error('addNpc 失败')
@@ -88,5 +87,22 @@ const lw2 = game.listWorlds()
 const qingyun = lw2.worlds.find((w) => w.id === 'qingyun')
 console.log('新世界状态:', JSON.stringify(qingyun))
 if (qingyun.npcs !== 1) throw new Error('新世界 NPC 数不对')
+
+// 11. AI 解锁新地点 → 自动注册进地点库（用独立 game 实例带自定义 AI）
+const travelAI = async () => JSON.stringify({
+  description: '你走出大殿，来到一处悬崖边。',
+  reactions: [{ npc: '青云真人', content: '青云真人负手而立，望向云海。', emotion: '淡然' }],
+  is_dead: false,
+  new_location: '观云崖',
+  relationship_update: null,
+})
+const travelGame = createGame({ ...deps, callAI: travelAI })
+const c2 = travelGame.createCharacter({ worldId: 'qingyun', profile: { name: '测试弟子' } })
+const a3 = await travelGame.act({ worldId: 'qingyun', characterId: c2.characterId, userInput: '走出大殿' })
+console.log('act(new_location):', JSON.stringify(a3))
+if (a3.newLocation !== '观云崖') throw new Error('场景切换失败')
+const qwLocations = JSON.parse(readFileSync(join(root, 'worlds', 'qingyun', 'locations.json'), 'utf8')).locations
+console.log('自动注册后的地点:', qwLocations.map((l) => l.name).join(', '))
+if (!qwLocations.some((l) => l.name === '观云崖')) throw new Error('AI 解锁的新地点未自动注册')
 
 console.log('✅ agentnoodle 自测全部通过')
