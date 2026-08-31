@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.8 (2026-08-30)
+
+- 文档：README 全面重写——特性、快速开始、对话工具总表、角色卡/世界导入、面板玩法、世界数据格式。
+
 ## 0.1.7 (2026-08-30)
 
 - 新增：`agentnoodle_import_card`——导入 SillyTavern 角色卡为 NPC（V1/V2/V3 JSON 或 PNG tEXt chara 块；name/description/personality/scenario/first_mes 映射）。
