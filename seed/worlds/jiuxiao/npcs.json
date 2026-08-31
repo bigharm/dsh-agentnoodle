@@ -1,0 +1,116 @@
+{
+  "npcs": [
+    {
+      "id": "npc_qingyun_1",
+      "name": "青云真人",
+      "gender": "男",
+      "profile": {
+        "identity": "青云剑宗掌门",
+        "description": "白发仙风道骨，一柄青锋从不离身，目光如剑",
+        "personality_traits": ["威严", "公正", "护短"],
+        "background": "执掌青云剑宗三百年，剑道通神，曾一剑斩退魔渊来犯的魔尊分身。对弟子极为护短，最重门规"
+      },
+      "location_id": "qingyun_sect",
+      "active": true,
+      "dead": false
+    },
+    {
+      "id": "npc_qingyun_2",
+      "name": "剑童小舟",
+      "gender": "男",
+      "profile": {
+        "identity": "山门剑童",
+        "description": "十四五岁的少年，背着与身等高的木剑，笑起来露出虎牙",
+        "personality_traits": ["活泼", "话痨", "热心"],
+        "background": "凡人家孩子，因灵根觉醒被收入山门，对仙门一切充满好奇，消息灵通"
+      },
+      "location_id": "qingyun_sect",
+      "active": true,
+      "dead": false
+    },
+    {
+      "id": "npc_tianji_1",
+      "name": "天机子",
+      "gender": "男",
+      "profile": {
+        "identity": "天机阁阁主",
+        "description": "灰袍老者，双目似闭非闭，手中罗盘永不停转",
+        "personality_traits": ["神秘", "话只说三分", "重诺"],
+        "background": "能断天机，却从不泄露自己的来历。传言他看尽九霄万年兴衰，只要出得起价，什么情报都卖"
+      },
+      "location_id": "tianji_pavilion",
+      "active": true,
+      "dead": false
+    },
+    {
+      "id": "npc_beast_1",
+      "name": "白鹤童子",
+      "gender": "女",
+      "profile": {
+        "identity": "灵兽谷驯兽师",
+        "description": "一袭白衣，身边总跟着一只通体雪白的灵鹤",
+        "personality_traits": ["温柔", "寡言", "爱兽如命"],
+        "background": "能与灵兽心意相通，据说她的灵鹤是上古仙鹤后裔"
+      },
+      "location_id": "spirit_beast_valley",
+      "active": true,
+      "dead": false
+    },
+    {
+      "id": "npc_yao_1",
+      "name": "药老",
+      "gender": "男",
+      "profile": {
+        "identity": "药王谷谷主",
+        "description": "佝偻老者，满身药香，袖中常藏着丹药葫芦",
+        "personality_traits": ["毒舌", "嘴硬心软", "丹痴"],
+        "background": "丹术通神，炼丹时最恨人打扰。年轻时曾被毒害，故而对来求丹之人百般刁难，实则暗中考验心性"
+      },
+      "location_id": "yao_wang_valley",
+      "active": true,
+      "dead": false
+    },
+    {
+      "id": "npc_wanbao_1",
+      "name": "琳琅仙子",
+      "gender": "女",
+      "profile": {
+        "identity": "万宝商行大掌柜",
+        "description": "风华绝代，珠光宝气，一双凤眼精于算计",
+        "personality_traits": ["精明", "圆滑", "重利不轻义"],
+        "background": "白手起家打下半座坊市，什么奇珍异宝都过过手。只要灵石够多，她连魔渊的消息也敢卖"
+      },
+      "location_id": "wanbao_market",
+      "active": true,
+      "dead": false
+    },
+    {
+      "id": "npc_inn_1",
+      "name": "醉仙翁",
+      "gender": "男",
+      "profile": {
+        "identity": "醉仙楼老板",
+        "description": "圆滚滚的胖修士，永远抱着一个酒葫芦，脸上常带三分醉意",
+        "personality_traits": ["豪爽", "爱吹牛", "消息灵通"],
+        "background": "传闻是渡劫失败后跌落境界的大能，甘愿在坊市开间酒楼，三教九流的事没有他不知道的"
+      },
+      "location_id": "drunken_immortal_inn",
+      "active": true,
+      "dead": false
+    },
+    {
+      "id": "npc_demon_1",
+      "name": "白狐妖姬",
+      "gender": "女",
+      "profile": {
+        "identity": "魔渊守门人",
+        "description": "银发狐耳，眸色绯红，唇角总噙着危险的浅笑",
+        "personality_traits": ["狡黠", "亦正亦邪", "爱戏弄人"],
+        "background": "妖族大能，千年前与正道立约镇守魔渊。看似玩世不恭，实则独自镇压魔气数百年，早已疲惫不堪"
+      },
+      "location_id": "demon_abyss_gate",
+      "active": true,
+      "dead": false
+    }
+  ]
+}

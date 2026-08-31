@@ -1,0 +1,18 @@
+{
+  "regions": [
+    { "id": "jiuxiao_region", "name": "九霄仙域", "description": "凡界与仙界之间的浩瀚修仙世界，仙门林立，灵气充沛", "icon": "⛰️" },
+    { "id": "jiuxiao_secret", "name": "秘境险地", "description": "九霄深处的秘境、禁地与渡劫之地", "icon": "🌀" }
+  ],
+  "locations": [
+    { "id": "qingyun_sect", "name": "青云剑宗山门", "parent": "jiuxiao_region", "description": "九霄第一剑道大宗的山门，万丈青石阶直通云海，门前石剑插天", "icon": "⚔️" },
+    { "id": "tianji_pavilion", "name": "天机阁藏书楼", "parent": "jiuxiao_region", "description": "九层飞檐藏书楼，藏尽天下典籍与情报，越往上层越机密", "icon": "📜" },
+    { "id": "spirit_beast_valley", "name": "灵兽谷", "parent": "jiuxiao_region", "description": "驯养灵兽的山谷，白鹤、麒麟、灵狐出没其间", "icon": "🦄" },
+    { "id": "yao_wang_valley", "name": "药王谷", "parent": "jiuxiao_region", "description": "炼丹圣地，谷中灵药满山，丹炉昼夜不息，药香十里可闻", "icon": "🌿" },
+    { "id": "wanbao_market", "name": "万宝商行", "parent": "jiuxiao_region", "description": "九霄最大的坊市，灵石、法宝、丹药、情报在此明码标价", "icon": "🏮" },
+    { "id": "feixian_ferry", "name": "飞仙渡", "parent": "jiuxiao_region", "description": "传说每甲子开启一次的渡口，接引有缘人白日飞升", "icon": "🕊️" },
+    { "id": "drunken_immortal_inn", "name": "醉仙楼", "parent": "jiuxiao_region", "description": "坊市中心的酒楼，灵酿醉仙，消息灵通，三教九流汇聚之地", "icon": "🍶" },
+    { "id": "falling_star_abyss", "name": "坠星渊", "parent": "jiuxiao_secret", "description": "深不见底的禁地，传闻上古陨星坠落于此，藏有足以颠覆仙域的秘宝", "icon": "🕳️" },
+    { "id": "demon_abyss_gate", "name": "魔渊入口", "parent": "jiuxiao_secret", "description": "镇压上古魔尊的深渊入口，封印松动，魔气外泄，附近寸草不生", "icon": "😈" },
+    { "id": "tribulation_cliff", "name": "天劫崖", "parent": "jiuxiao_secret", "description": "修士渡劫之地，崖顶雷云常年不散，化神修士在此迎接天劫", "icon": "⚡" }
+  ]
+}

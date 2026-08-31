@@ -56,6 +56,18 @@ dsh plugin --profile web add dsh-agentnoodle
 
 示例：「帮我建一个『青云门』的修仙世界，掌门叫青云真人」→ agent 依次调用 `create_world` → `add_location` / `generate_content` → `add_npc`，全程不用碰代码。
 
+### 真实对话示例
+
+> **用户**：在 agentnoodle 里创建一个仙侠世界，地点 10 个，人物若干
+
+agent 会依次调用：
+1. `agentnoodle_create_world(worldId, name, worldview)` — 创建世界骨架并写入世界观；
+2. `agentnoodle_generate_content(worldId, stage=locations)` — AI 生成地点（不足 10 个时用 `agentnoodle_add_location` 补齐）；
+3. `agentnoodle_generate_content(worldId, stage=npcs)` — AI 生成 NPC（可再 `agentnoodle_add_npc` 补充）；
+4. 告知世界已就绪——刷新面板即可开玩。
+
+内置示例：`seed/worlds/jiuxiao/` 就是一个完整的「九霄仙域」仙侠世界（10 地点 + 8 NPC），全新安装后直接可选。
+
 ## 角色卡 / 世界导入
 
 - **SillyTavern 角色卡**（`agentnoodle_import_card`）：
