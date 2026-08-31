@@ -67,20 +67,34 @@ window.__ModuleLoader__.load({
       const [charId, setCharId] = React.useState('');
       const [scene, setScene] = React.useState('');
       const [npcs, setNpcs] = React.useState([]);
-      const [log, setLog] = React.useState([{ t: 'info', text: '🔄 正在连接 Host…' }]);
+      const [log, setLog] = React.useState([{ key: 'init', t: 'info', text: '🔄 正在连接 Host…' }]);
       const [input, setInput] = React.useState('');
       const [busy, setBusy] = React.useState(false);
       const [name, setName] = React.useState('');
+      const [historyMore, setHistoryMore] = React.useState(false);
+      const [historyNext, setHistoryNext] = React.useState(0);
+      const [busyMore, setBusyMore] = React.useState(false);
+      const logRef = React.useRef(null);
+      const keyRef = React.useRef(0);
+      const curRef = React.useRef({ wid: '', cid: '' });
+      const nextKey = () => 'k' + (keyRef.current++);
+
+      // 把一条历史记录转成面板日志条目（带稳定 key）
+      const toEntry = (m) => {
+        if (m.speaker === '系统') return { key: nextKey(), t: 'sys', text: m.content };
+        if (m.speaker === '旁白') return { key: nextKey(), t: 'narr', text: m.content };
+        return { key: nextKey(), t: 'msg', speaker: m.speaker || '?', text: m.content, avatar: m.avatar || '' };
+      };
 
       React.useEffect(() => {
         rpc('worlds', {}).then((r) => {
-          if (r && r.error) { setLog([{ t: 'err', text: '❌ worlds 失败：' + r.error }]); return; }
+          if (r && r.error) { setLog([{ key: nextKey(), t: 'err', text: '❌ worlds 失败：' + r.error }]); return; }
           if (r && r.worlds) {
             setWorlds(r.worlds);
             if (r.currentWorld) { setWorldId(r.currentWorld); doBoot(r.currentWorld); }
-            else { setLog([{ t: 'info', text: '✅ 已连接 Host，但没有默认世界' }]); }
+            else { setLog([{ key: nextKey(), t: 'info', text: '✅ 已连接 Host，但没有默认世界' }]); }
           } else {
-            setLog([{ t: 'err', text: '❌ worlds 返回异常：' + JSON.stringify(r) }]);
+            setLog([{ key: nextKey(), t: 'err', text: '❌ worlds 返回异常：' + JSON.stringify(r) }]);
           }
         });
       }, []);
@@ -88,40 +102,61 @@ window.__ModuleLoader__.load({
       const doBoot = (wid) => {
         if (!wid) return;
         setBusy(true);
-        setLog([{ t: 'info', text: '🔄 正在加载世界…' }]);
+        setLog([{ key: nextKey(), t: 'info', text: '🔄 正在加载世界…' }]);
         rpc('boot', { worldId: wid }).then((r) => {
-          if (r && r.error) { setLog([{ t: 'err', text: '❌ boot 失败：' + r.error }]); return; }
+          if (r && r.error) { setLog([{ key: nextKey(), t: 'err', text: '❌ boot 失败：' + r.error }]); return; }
           setBoot(r);
           setCharId('');
           const first = r.characters && r.characters[0];
           if (first) { setCharId(first.id); doState(wid, first.id); }
-          else { setScene(''); setNpcs([]); setLog([{ t: 'info', text: '✅ 世界已加载：' + (r.worldName || wid) + '。创建一个角色开始。' }]); }
+          else { setScene(''); setNpcs([]); setHistoryMore(false); setLog([{ key: nextKey(), t: 'info', text: '✅ 世界已加载：' + (r.worldName || wid) + '。创建一个角色开始。' }]); }
         }).finally(() => setBusy(false));
       };
 
       const doState = (wid, cid) => {
+        curRef.current = { wid, cid };
+        setHistoryMore(false);
         rpc('state', { worldId: wid, characterId: cid }).then((r) => {
-          if (r && r.error) { setLog([{ t: 'err', text: '❌ state 失败：' + r.error }]); return; }
+          if (r && r.error) { setLog([{ key: nextKey(), t: 'err', text: '❌ state 失败：' + r.error }]); return; }
           if (r && r.character) {
             setScene(r.character.scene);
             setNpcs(r.sceneNpcs || []);
-            const entries = (r.historyTail || []).map((m) => {
-              if (m.speaker === '系统') return { t: 'sys', text: m.content };
-              if (m.speaker === '旁白') return { t: 'narr', text: m.content };
-              return { t: 'msg', speaker: m.speaker || '?', text: m.content, avatar: m.avatar || '' };
-            });
-            setLog([{ t: 'info', text: '📍 ' + r.character.scene }, ...entries]);
+            const entries = (r.historyTail || []).map(toEntry);
+            setLog([{ key: nextKey(), t: 'info', text: '📍 ' + r.character.scene }, ...entries]);
+            setHistoryMore(!!r.historyMore);
+            setHistoryNext(r.historyNext || 0);
           }
         });
       };
 
+      // 加载更早历史：滚动到顶或点按钮触发；前置插入并保持视觉位置
+      const loadMore = () => {
+        const cur = curRef.current;
+        if (busyMore || !historyMore) return;
+        if (!cur.wid || !cur.cid) return;
+        setBusyMore(true);
+        rpc('history', { worldId: cur.wid, characterId: cur.cid, before: historyNext }).then((r) => {
+          if (curRef.current.wid !== cur.wid || curRef.current.cid !== cur.cid) return;
+          if (r && r.error) { setLog((l) => [...l, { key: nextKey(), t: 'err', text: '❌ history 失败：' + r.error }]); return; }
+          const older = (r.entries || []).map(toEntry);
+          if (!older.length) { setHistoryMore(false); return; }
+          const el = logRef.current;
+          const prevH = el ? el.scrollHeight : 0;
+          const prevTop = el ? el.scrollTop : 0;
+          setLog((l) => (l.length && l[0].t === 'info' ? [l[0], ...older, ...l.slice(1)] : [...older, ...l]));
+          if (el) requestAnimationFrame(() => { el.scrollTop = el.scrollHeight - prevH + prevTop; });
+          setHistoryMore(!!r.more);
+          setHistoryNext(r.nextBefore || 0);
+        }).finally(() => setBusyMore(false));
+      };
+
       const doCreate = () => {
-        if (!worldId) { setLog([{ t: 'err', text: '❌ 世界未加载' }]); return; }
+        if (!worldId) { setLog((l) => [...l, { key: nextKey(), t: 'err', text: '❌ 世界未加载' }]); return; }
         setBusy(true);
         rpc('createCharacter', { worldId, profile: { name: name || '无名旅人', identity: '旅人', appearance: '普通旅人', personality: '沉默寡言', background: '' } })
           .then((r) => {
-            if (r && r.error) { setLog([{ t: 'err', text: '❌ createCharacter 失败：' + r.error }]); return; }
-            setLog([{ t: 'info', text: '✅ 角色已创建：' + r.name + '，初始场景：' + r.scene }]);
+            if (r && r.error) { setLog((l) => [...l, { key: nextKey(), t: 'err', text: '❌ createCharacter 失败：' + r.error }]); return; }
+            setLog((l) => [...l, { key: nextKey(), t: 'info', text: '✅ 角色已创建：' + r.name + '，初始场景：' + r.scene }]);
             doBoot(worldId);
           })
           .finally(() => setBusy(false));
@@ -129,28 +164,28 @@ window.__ModuleLoader__.load({
 
       const doAct = () => {
         const text = input.trim();
-        if (!text) { setLog((l) => [...l, { t: 'info', text: '⚠️ 请输入行动' }]); return; }
-        if (!worldId) { setLog((l) => [...l, { t: 'err', text: '⚠️ 世界未加载' }]); return; }
-        if (!charId) { setLog((l) => [...l, { t: 'info', text: '⚠️ 请先创建或选择一个角色' }]); return; }
+        if (!text) { setLog((l) => [...l, { key: nextKey(), t: 'info', text: '⚠️ 请输入行动' }]); return; }
+        if (!worldId) { setLog((l) => [...l, { key: nextKey(), t: 'err', text: '⚠️ 世界未加载' }]); return; }
+        if (!charId) { setLog((l) => [...l, { key: nextKey(), t: 'info', text: '⚠️ 请先创建或选择一个角色' }]); return; }
         if (busy) return;
         setBusy(true);
         setInput('');
-        setLog((l) => [...l, { t: 'user', text }]);
+        setLog((l) => [...l, { key: nextKey(), t: 'user', text }]);
         rpc('act', { worldId, characterId: charId, userInput: text }).then((r) => {
-          if (r && r.error) { setLog((l) => [...l, { t: 'err', text: '❌ act 失败：' + r.error + (r.raw ? '\n' + r.raw : '') }]); return; }
+          if (r && r.error) { setLog((l) => [...l, { key: nextKey(), t: 'err', text: '❌ act 失败：' + r.error + (r.raw ? '\n' + r.raw : '') }]); return; }
           const add = (r.entries && r.entries.length)
-            ? r.entries.map((e) => e.speaker === '旁白' ? { t: 'narr', text: e.content } : { t: 'msg', speaker: e.speaker, text: e.content, avatar: e.avatar || '' })
-            : [{ t: 'narr', text: r.description || '' }];
+            ? r.entries.map((e) => e.speaker === '旁白' ? { key: nextKey(), t: 'narr', text: e.content } : { key: nextKey(), t: 'msg', speaker: e.speaker, text: e.content, avatar: e.avatar || '' })
+            : [{ key: nextKey(), t: 'narr', text: r.description || '' }];
           setLog((l) => [...l, ...add]);
           setScene(r.scene);
           setNpcs(r.sceneNpcs || []);
-          if (r.newLocation) setLog((l) => [...l, { t: 'sys', text: '🕹️ 场景切换至：' + r.newLocation }]);
+          if (r.newLocation) setLog((l) => [...l, { key: nextKey(), t: 'sys', text: '🕹️ 场景切换至：' + r.newLocation }]);
         }).finally(() => setBusy(false));
       };
 
       const renderLogEntry = (e, i) => {
         if (e.t === 'msg') {
-          return React.createElement('div', { key: i, className: 'an-msg' },
+          return React.createElement('div', { key: e.key !== undefined ? e.key : i, className: 'an-msg' },
             React.createElement(Avatar, { worldId, avatar: e.avatar, name: e.speaker }),
             React.createElement('div', { className: 'an-msg-body' },
               React.createElement('div', { className: 'an-msg-name' }, e.speaker),
@@ -158,9 +193,9 @@ window.__ModuleLoader__.load({
             ),
           );
         }
-        if (e.t === 'narr') return React.createElement('div', { key: i, className: 'an-narr' }, e.text);
+        if (e.t === 'narr') return React.createElement('div', { key: e.key !== undefined ? e.key : i, className: 'an-narr' }, e.text);
         const cls = e.t === 'err' ? 'an-err' : e.t === 'user' ? 'an-log-user' : e.t === 'sys' ? 'an-log-sys' : '';
-        return React.createElement('div', { key: i, className: cls }, e.text);
+        return React.createElement('div', { key: e.key !== undefined ? e.key : i, className: cls }, e.text);
       };
 
       return React.createElement('div', null,
@@ -189,8 +224,14 @@ window.__ModuleLoader__.load({
             n.name,
           )),
         ),
-        React.createElement('div', { className: 'an-log ' + (busy ? 'an-busy' : '') },
-          log.map((e, i) => renderLogEntry(e, i))),
+        historyMore && React.createElement('div', { className: 'an-row' },
+          React.createElement('button', { onClick: loadMore, disabled: busyMore, style: { flex: 1, textAlign: 'center' } }, busyMore ? '加载中…' : '⬆ 更早的历史'),
+        ),
+        React.createElement('div', {
+          className: 'an-log ' + (busy ? 'an-busy' : ''),
+          ref: logRef,
+          onScroll: (e) => { if (e.target.scrollTop <= 40) loadMore(); },
+        }, log.map((e, i) => renderLogEntry(e, i))),
         React.createElement('div', { className: 'an-row' },
           React.createElement('input', {
             value: input,

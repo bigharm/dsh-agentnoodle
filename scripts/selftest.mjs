@@ -196,4 +196,34 @@ if (!detail2.rules.includes('NPC 不得撒谎。')) throw new Error('详情缺�
 const clearRules = game.updateRules({ worldId: 'qingyun', rulesText: '' })
 if (!clearRules.ok || clearRules.ruleCount !== 0) throw new Error('清空规则失败')
 
+// 18. 历史分页：state 只带尾部（含 seq/总量/游标），history 接口翻更早
+const histAI = async () => JSON.stringify({ description: 'd', reactions: [], is_dead: false, new_location: null, relationship_update: null })
+const histGame = createGame({ ...deps, callAI: histAI })
+const hc = histGame.createCharacter({ worldId: 'tavern', profile: { name: '历史测试' } })
+const histCharPath = join(root, 'worlds', 'tavern', 'sessions', 'characters', hc.characterId + '.json')
+const histChar = JSON.parse(readFileSync(histCharPath, 'utf8'))
+histChar.conversation_history = Array.from({ length: 60 }, (_, k) => ({
+  speaker: k % 2 ? '老汤姆' : '旁白',
+  content: '第' + (k + 1) + '条',
+  scene: '酒馆大厅',
+  is_dead: false,
+  timestamp: new Date().toISOString(),
+  avatar: k % 2 ? 'npc_lao_tangmu.png' : '',
+}))
+writeFileSync(histCharPath, JSON.stringify(histChar, null, 2), 'utf8')
+const st = histGame.state({ worldId: 'tavern', characterId: hc.characterId })
+console.log('state 历史:', st.historyTail.length, '条(尾) / 共', st.historyTotal, '条 / more=', st.historyMore, '/ next=', st.historyNext)
+if (st.historyTail.length !== 20 || st.historyTotal !== 60 || !st.historyMore || st.historyNext !== 40) throw new Error('state 历史尾部/总量/游标异常')
+if (st.historyTail[0].seq !== 40 || st.historyTail[19].seq !== 59) throw new Error('state 历史 seq 异常')
+const pg1 = histGame.history({ worldId: 'tavern', characterId: hc.characterId, before: st.historyNext })
+console.log('history 第1页:', pg1.entries.length, '条 / more=', pg1.more, '/ next=', pg1.nextBefore)
+if (pg1.entries.length !== 40 || pg1.more || pg1.nextBefore !== 0) throw new Error('history 第1页分页异常')
+const seqs = [...pg1.entries, ...st.historyTail].map((e) => e.seq).sort((a, b) => a - b)
+if (seqs[0] !== 0 || seqs[seqs.length - 1] !== 59 || seqs.length !== 60) throw new Error('history 页码不连续（未覆盖全部 60 条）')
+const mid = histGame.history({ worldId: 'tavern', characterId: hc.characterId, before: 60, limit: 50 })
+console.log('history 中段:', mid.entries.length, '条 / more=', mid.more, '/ next=', mid.nextBefore)
+if (mid.entries.length !== 50 || !mid.more || mid.nextBefore !== 10) throw new Error('history 中段分页异常')
+const head = histGame.history({ worldId: 'tavern', characterId: hc.characterId, before: 10 })
+if (head.entries.length !== 10 || head.more || head.entries[0].seq !== 0) throw new Error('history 首段分页异常')
+
 console.log('✅ agentnoodle 自测全部通过')
