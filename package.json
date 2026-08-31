@@ -1,6 +1,6 @@
 {
   "name": "dsh-agentnoodle",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "AI 驱动的群像反应叙事游戏（DeepSeek Harness 插件）：玩家输入一个行动，在场多个 NPC 各自回应，每条反应独立成一条带头像插图的聊天室消息。",
   "type": "module",
   "main": "lib/index.js",

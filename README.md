@@ -37,13 +37,24 @@ dsh plugin --profile web add dsh-agentnoodle
 
 ## 在对话里创建世界
 
-插件注册了三个模型工具，harness 的 agent 可以直接调用——**不用写代码、不用重启**：
+插件注册了模型工具，harness 的 agent 可以直接调用——**不用写代码、不用重启**：
 
-- `agentnoodle_create_world` — 创建新世界（worldId + name + 可选世界观），自动建地点/NPC 骨架并切换为当前世界
-- `agentnoodle_list_worlds` — 列出所有世界（地点数/NPC 数/角色数）
-- `agentnoodle_add_npc` — 向世界添加 NPC（worldId + name + locationId）
+- `agentnoodle_create_world` — 创建新世界（worldId + name + 可选世界观），自动建骨架并切换为当前世界
+- `agentnoodle_update_worldview` — 更新世界观文本（世界观迭代阶段用）
+- `agentnoodle_generate_content` — 按世界观用 AI 生成地点（stage=locations）或 NPC（stage=npcs，自动校验地点归属），或两者（stage=all）
+- `agentnoodle_list_worlds` — 世界概览；传 worldId 查看详情（地点+NPC 名单）
+- `agentnoodle_add_location` / `agentnoodle_add_npc` — 手工补地点/NPC
 
-例如直接对 agent 说：「帮我建一个叫『青云门』的修仙世界，掌门叫青云真人」——agent 会调用工具完成，面板刷新后即可选择游玩。世界就是普通文件（`<dataDir>/worlds/<id>/`），任何能写这些文件的入口都能建世界。
+### 从零开玩的标准流程
+
+1. **世界观**：粘贴你的世界观文本，或让 agent 起草 → 对话里几轮修改、确认 → `update_worldview` 写入最终版
+2. **生成地点**：`generate_content(worldId, stage=locations)` → AI 生成区域和场景写入地点库
+3. **生成 NPC**：`generate_content(worldId, stage=npcs)` → AI 生成 NPC（`location_id` 强制校验必须来自地点库）
+4. **开玩**：面板刷新选世界 → 建/选角色 → 群像反应；游玩中 AI 解锁的新地点会自动注册进地点库
+
+例如：「帮我建一个『青云门』的修仙世界」→ 讨论世界观 → 「地点和 NPC 也生成一下」——agent 调工具完成，全程不用碰代码。
+
+世界就是普通文件（`<dataDir>/worlds/<id>/`），任何能写这些文件的入口都能建世界。
 
 ## 开发
 

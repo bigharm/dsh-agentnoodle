@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.6 (2026-08-30)
+
+- 新增：`agentnoodle_update_worldview`——世界观迭代阶段写入最终版。
+- 新增：`agentnoodle_generate_content`——按世界观用 AI 生成地点（stage=locations）与 NPC（stage=npcs，`location_id` 强制校验；stage=all 依次生成）。配套 `seed/prompts/generate_locations.txt` / `generate_npcs.txt`。
+- 至此形成完整「从零开玩」流程：世界观讨论确认 → AI 生成地点/NPC → 开玩。
+
 ## 0.1.5 (2026-08-30)
 
 - 改进：`agentnoodle_list_worlds` 支持传入 `worldId` 查看世界详情——全部地点（含各自 NPC 名单）、NPC 名单（身份/地点/头像）、角色与世界观摘要。

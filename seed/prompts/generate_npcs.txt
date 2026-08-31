@@ -1,0 +1,43 @@
+你是一个游戏 NPC 生成器。根据以下世界观和地点信息，生成初始 NPC。
+
+## 世界观
+{world_setting}
+
+## 【地点列表】（每个地点都有 id 和 name，NPC 只能放在这些地点里）
+{locations}
+
+## 要求
+1. 每个主要地点生成 1 个以上 NPC
+2. NPC ID 格式：`npc_<地点ID>_<序号>`，如 `npc_bai_cao_ge_1`（严禁中文字符）
+3. 角色要丰满，有独特的性格和背景
+4. 世界观中如果有重要角色，应当生成对应 NPC，由你判断这个 NPC 应当在哪个地点
+5. **重要**：`location_id` 必须从上面【地点列表】中的 `id` 字段选择，不能自己编造
+6. NPC 应该放置在场景（location）中，不能放在区域（region）上
+
+## 初始好感度（favorability）规则
+1. 为每个 NPC 设置初始好感度（0-100 整数）
+2. 无明显偏好的 NPC 初始为 40-60（中立偏友好）
+3. 友好的 NPC 初始为 60-80
+4. 敌对的 NPC 初始为 10-30
+5. 亲近的 NPC 初始为 80-95
+
+## 输出格式（只输出 JSON 对象，不要有其他文字）
+{
+  "npcs": [
+    {
+      "id": "npc_bai_cao_ge_1",
+      "name": "赵铁秤",
+      "gender": "男",
+      "profile": {
+        "identity": "百草阁执事",
+        "description": "五十多岁，面容清癯，不苟言笑",
+        "personality_traits": ["严苛", "务实", "外冷内热"],
+        "background": "在百草阁工作三十年，对药材了如指掌"
+      },
+      "location_id": "bai_cao_ge",
+      "active": true,
+      "dead": false,
+      "favorability": 55
+    }
+  ]
+}

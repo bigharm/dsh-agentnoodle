@@ -112,4 +112,34 @@ if (detail.locations.length !== 2) throw new Error('详情地点数不对')
 if (!detail.locations.some((l) => l.id === 'main_hall' && l.npcs.includes('青云真人'))) throw new Error('详情地点 NPC 名单缺失')
 if (!detail.npcs.some((n) => n.name === '青云真人' && n.locationId === 'main_hall')) throw new Error('详情 NPC 名单缺失')
 
+// 13. 从零建世界：updateWorldview → generateContent(all)（AI 返回地点+NPC，含校验）
+const genAI = async (prompt) => {
+  if (prompt.includes('地点生成器')) {
+    return JSON.stringify({
+      regions: [{ id: 'qingyun_region', name: '青云山', description: '主峰', icon: '⛰️' }],
+      locations: [
+        { id: 'main_hall', name: '青云大殿', parent: 'qingyun_region', description: '门派正殿', icon: '🏯' },
+        { id: 'sword_peak', name: '剑峰', parent: 'qingyun_region', description: '练剑之地', icon: '⚔️' },
+      ],
+    })
+  }
+  return JSON.stringify({
+    npcs: [
+      { id: 'npc_main_hall_1', name: '青云真人', gender: '男', profile: { identity: '掌门', description: '白发仙风道骨', personality_traits: ['淡然'], background: '执掌青云门数十年' }, location_id: 'main_hall', active: true, dead: false, favorability: 60 },
+      { id: 'npc_bad_loc', name: '编造地点的NPC', location_id: 'nonexistent_place' },
+    ],
+  })
+}
+const genGame = createGame({ ...deps, callAI: genAI })
+const uw = genGame.updateWorldview({ worldId: 'qingyun', worldview: '修仙门派，剑气纵横。主峰青云山，山巅剑峰为练剑之地。' })
+if (!uw.ok) throw new Error('updateWorldview 失败')
+const g = await genGame.generateContent({ worldId: 'qingyun', stage: 'all' })
+console.log('generateContent:', JSON.stringify(g))
+if (!g.ok) throw new Error('generateContent 失败')
+const wLoc = JSON.parse(readFileSync(join(root, 'worlds', 'qingyun', 'locations.json'), 'utf8'))
+const wNpc = JSON.parse(readFileSync(join(root, 'worlds', 'qingyun', 'npcs.json'), 'utf8'))
+if (wLoc.locations.length !== 2) throw new Error('生成地点数不对')
+if (wNpc.npcs.length !== 1) throw new Error('应只有 1 个合法 NPC（编造地点的被校验拒绝）')
+if (wNpc.npcs[0].location_id !== 'main_hall') throw new Error('生成 NPC 地点异常')
+
 console.log('✅ agentnoodle 自测全部通过')
