@@ -1,6 +1,6 @@
 {
   "name": "dsh-agentnoodle",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "可扩展的 AI 群像聊天游戏框架（DeepSeek Harness 插件）：输入一个行动，多个 NPC 各自回应，带头像插图；世界、地点、NPC 与功能扩展都可在对话里让 agent 直接添加修改，无需写代码。",
   "type": "module",
   "main": "lib/index.js",

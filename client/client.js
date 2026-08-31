@@ -216,7 +216,7 @@ window.__ModuleLoader__.load({
           React.createElement('button', { onClick: doCreate }, '创建'),
         ),
         scene && React.createElement('div', { className: 'an-row' },
-          React.createElement('span', null, '📍 ' + scene),
+          React.createElement('span', null, '📍 当前地点：' + scene),
           npcs.map((n) => React.createElement('span', { key: n.id, className: 'an-npc' },
             n.avatar
               ? React.createElement('img', { src: '/anod/avatar/' + worldId + '/' + n.avatar, alt: n.name, className: 'an-avatar' })
