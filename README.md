@@ -75,6 +75,16 @@ agent 会依次调用：
 
 内置示例：`seed/worlds/jiuxiao/` 就是一个完整的「九霄仙域」仙侠世界（10 地点 + 8 NPC），全新安装后直接可选。
 
+## 游戏规则（对话里添加，随时生效）
+
+世界可以带一份**玩家规则**（`<dataDir>/worlds/<id>/rules.txt`，每行一条，`#` 为注释）。规则是**硬性约束**：注入游戏提示词的醒目位置、优先于世界观，内容生成（地点/NPC）也会遵守。
+
+- 工具：`agentnoodle_update_rules(worldId, rulesText)` — 覆盖整份规则（传空文本清空）
+- 查看：`agentnoodle_list_worlds(worldId)` 详情含 rules
+- 例如玩家说：「加一条规则：NPC 被问及关键情报时不得撒谎」→ agent 调用工具 → **下次行动立即生效**（无需重启、无需改代码）
+
+> 提示：提示词层规则是"软约束"（AI 大部分时候遵守）；需要程序强制的机制（死亡状态、数值系统等）属于插件代码扩展——这是框架可扩展定位的一部分。
+
 ## 角色卡 / 世界导入
 
 - **SillyTavern 角色卡**（`agentnoodle_import_card`）：

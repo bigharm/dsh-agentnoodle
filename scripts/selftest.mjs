@@ -180,4 +180,20 @@ const iwIndex = JSON.parse(readFileSync(join(root, 'worlds', 'worlds_index.json'
 if (!iwIndex.worlds.some((w) => w.id === 'jianghu')) throw new Error('importWorld 未注册索引')
 if (!existsSync(join(root, 'worlds', 'jianghu', 'avatars', 'npc_ke_zhan_1.png'))) throw new Error('importWorld 未复制头像')
 
+// 17. 规则系统：update_rules → 提示词注入 → 世界详情带 rules → 清空
+const uwRules = game.updateRules({ worldId: 'qingyun', rulesText: '# 测试规则\nNPC 不得撒谎。\n禁用火系法术。' })
+console.log('updateRules:', JSON.stringify(uwRules))
+if (!uwRules.ok || uwRules.ruleCount !== 2) throw new Error('updateRules 失败')
+let capturedPrompt = ''
+const captureAI = async (prompt) => { capturedPrompt = prompt; return JSON.stringify({ description: '测试', reactions: [{ npc: '青云真人', content: '嗯。', emotion: '淡然' }], is_dead: false, new_location: null, relationship_update: null }) }
+const capGame = createGame({ ...deps, callAI: captureAI })
+const cr = capGame.createCharacter({ worldId: 'qingyun', profile: { name: '规则测试' } })
+await capGame.act({ worldId: 'qingyun', characterId: cr.characterId, userInput: '测试行动' })
+if (!capturedPrompt.includes('硬性规则') || !capturedPrompt.includes('NPC 不得撒谎')) throw new Error('规则未注入提示词')
+const detail2 = game.listWorlds({ worldId: 'qingyun' })
+console.log('世界详情 rules:', JSON.stringify(detail2.rules))
+if (!detail2.rules.includes('NPC 不得撒谎。')) throw new Error('详情缺规则')
+const clearRules = game.updateRules({ worldId: 'qingyun', rulesText: '' })
+if (!clearRules.ok || clearRules.ruleCount !== 0) throw new Error('清空规则失败')
+
 console.log('✅ agentnoodle 自测全部通过')
